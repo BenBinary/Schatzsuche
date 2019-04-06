@@ -51,8 +51,11 @@ class MyLocationManager:  NSObject, CLLocationManagerDelegate {
         locmgr.delegate = self // as? CLLocationManagerDelegate
         locmgr.desiredAccuracy = kCLLocationAccuracyBest
         
+        
+        // UM Erlaubnis zu bekommen
         locmgr.requestWhenInUseAuthorization()
         
+        // Location- und Heading-Ereignisse verarbeiten
         locmgr.startUpdatingLocation()
         locmgr.startUpdatingHeading()
         

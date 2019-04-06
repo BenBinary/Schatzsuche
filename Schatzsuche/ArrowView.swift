@@ -15,6 +15,8 @@ import UIKit
     
     @IBInspectable var heading: Double = 0.0 {
         didSet {
+            
+            // bei Änderung neu zeichnen
             setNeedsDisplay()
         }
     }
@@ -35,7 +37,7 @@ import UIKit
         let y1 = y0 - radius1 * CGFloat(sin(rad))
         
         let x2 = x0 + radius1 * CGFloat(cos(rad + .pi * 0.8))
-        let y2 = x0 + radius1 * CGFloat(sin(rad + .pi * 0.8))
+        let y2 = y0 + radius1 * CGFloat(sin(rad + .pi * 0.8))
         
         let x3 = x0 + radius2 * CGFloat(cos(rad + .pi))
         let y3 = y0 - radius2 * CGFloat(sin(rad + .pi))
@@ -47,7 +49,7 @@ import UIKit
         let myBezier = UIBezierPath()
         myBezier.move(to: CGPoint(x: x1, y: y1))
         myBezier.addLine(to: CGPoint(x: x2, y: y2))
-        myBezier.addLine(to: CGPoint(x: x3, y: y4))
+        myBezier.addLine(to: CGPoint(x: x3, y: y3))
         myBezier.addLine(to: CGPoint(x: x4, y: y4))
         
         myBezier.close()

@@ -25,10 +25,14 @@ class SaveVC: UIViewController, UITextFieldDelegate {
     }
     
     
+    // Bei Return ausblenden
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
+        // Eingabe beenden, TT ausblenden
         view.endEditing(true)
         
+        
+        // Segue zu View 2 initiieren
         performSegue(withIdentifier: "SegueUnwindToMain", sender: self)
         
         

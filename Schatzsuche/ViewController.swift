@@ -19,12 +19,16 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-     
-        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.notifyNewLocation(_:)), name: Notification.Name("New Value"), object: nil)
+        
+        tableView.dataSource = self
+    //    tableView.delegate = self
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.notifyNewLocation(_:)), name: Notification.Name("NewLocation"), object: nil)
         
     }
     
-    
+    // neue Position anlegen --> wird durch das Observer-Pattern aufgerufen
+    // eine notifyNewLocation-Funktion ist für jede Methode erforderlich, die über einen Selektor aufgerufen wird
     @objc func notifyNewLocation(_ notification: Notification) {
         
         let coord = mylocmgr.location.coordinate
@@ -40,15 +44,19 @@ class ViewController: UIViewController {
         
         
         // PopUp zum Speicherdialog
-        if let dest = segue.destination as? SaveVC, let popPC = dest.popoverPresentationController {
+        if let dest = segue.destination as? SaveVC,
+            let popPC = dest.popoverPresentationController {
             popPC.delegate = self
         }
         
         // Segue zur Detailansicht
-        if let dest = segue.destination as? DetailVC, let cell = sender as? UITableViewCell, let indexPath = tableView.indexPath(for: cell) {
+        if let dest = segue.destination as? DetailVC,
+            let cell = sender as? UITableViewCell,
+            let indexPath = tableView.indexPath(for: cell) {
+            
             dest.row = indexPath.row
             dest.pos = poslist[indexPath.row]
-        //    dest.delegate = self
+            //    dest.delegate = self
             
         }
         
@@ -56,7 +64,7 @@ class ViewController: UIViewController {
     
     
     
-    
+    // Sobald das SaveVC verlassen wird
     override func unwind(for unwindSegue: UIStoryboardSegue, towards subsequentVC: UIViewController) {
         
         if let src = unwindSegue.source as? SaveVC {
@@ -67,6 +75,8 @@ class ViewController: UIViewController {
             }
             
             if let txt = src.posname.text {
+                
+                //Entfernt alle Leerzeichen aus dem Text
                 let posname = txt.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
                 
                 if posname != "", let loc = mylocmgr.location {
@@ -135,19 +145,23 @@ extension ViewController: DetailVCDelegate {
     
     func backFromDetailVC(_ sourceVC: DetailVC) {
         
-        
+        // Beim Löschen in dem DetailVC wir der Listeneintrag aus poslist-Array gelöscht
         if sourceVC.deleteItem == true {
-        
+            
             // Listenelement löschen
             poslist.remove(at: sourceVC.row)
-        
+            
             tableView.reloadData()
-        
+            
             Position.saveArray(poslist)
         } else {
             
+            // Andernfalls wird der betreffende Listeneintrag verändert und dies wird durch die Methoden reload und saveAsaveArray durchgeführt
+            
             let txt = sourceVC.txtPosition.text!
             
+            
+            // Entfernen aller Leerzeichen aus dem Textfeld
             let newname = txt.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
             
             

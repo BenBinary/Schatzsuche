@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 protocol DetailVCDelegate {
     
@@ -18,8 +19,11 @@ class DetailVC: UIViewController {
     
     var pos:Position!
     var row:Int!
-    var delegate:DetailVCDelegate?
+    let mylocmgr = MyLocationManager.sharedInstance
     var deleteItem = false
+    var delegate:DetailVCDelegate?
+    var heading = 0.0
+    
     
     @IBOutlet weak var arrowview: ArrowView!
     @IBOutlet weak var txtPosition: UITextField!
@@ -30,6 +34,24 @@ class DetailVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if pos == nil { return }
+        
+        
+        // Steuerelemente mit Daten aus pos initialisieren
+        let dfmt = DateFormatter()
+        dfmt.dateStyle = .medium
+        dfmt.timeStyle = .short
+        txtPosition.text = pos.name
+        lblTime.text = "Zeit: " + dfmt.string(from: pos.time as Date)
+        let long = degressMinutes(pos.long)
+        let lat = degressMinutes(pos.lat)
+        lblLatLong.text = "Ort: Lat = \(lat) / Long = \(long)"
+        
+        // TT verarbeiten
+        txtPosition.delegate = self
+        
+        // neue Position verarbetien
+        // NotificationCenter.default.addObserver(self, selector: #selector(DetailVC.), name: <#T##NSNotification.Name?#>, object: <#T##Any?#>)
         
         
     }
@@ -39,6 +61,27 @@ class DetailVC: UIViewController {
         
         
     }
+    
+    
+    // Berechnung akutelle Position und Zeilpunkt
+    // - Richtung wird bestimmt
+    // - Abstandsermittlung mithilfe von distanceFromLocaiton
+    @objc func notifyNewLocation(_ notification: Notification) {
+        
+        // Entfernung zwischen 'pos' und aktuellem Standpunkt errechnen
+        let loc = CLLocation(latitude: pos.lat, longitude: pos.long)
+        let dist = mylocmgr.location.distance(from: loc)
+        lblDistance.text = "-->" + String(format: "%.0f", dist)
+        
+        // Richtung vom Standort zum Ziel berechnen
+        let toLat = pos.lat / 180 * .pi
+        let toLong = pos.long / 180 * .pi
+        let fromLat = mylocmgr.location.coordinate.latitude / 180 * .pi
+        let fromLong = mylocmgr.location.coordinate.longitude / 180 * .pi
+        
+        //let rad = atan2
+    }
+    
     
 }
 
