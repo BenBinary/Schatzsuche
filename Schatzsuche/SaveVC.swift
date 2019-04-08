@@ -15,8 +15,6 @@ class SaveVC: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-
-        
         posname.delegate = self
         
         // Fokus in den Fokus setzen

@@ -53,13 +53,41 @@ class DetailVC: UIViewController {
         // neue Position verarbetien
         // NotificationCenter.default.addObserver(self, selector: #selector(DetailVC.), name: <#T##NSNotification.Name?#>, object: <#T##Any?#>)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(DetailVC.notifyNewLocation(_:)), name: Notification.Name(rawValue: "NewLocation"), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(DetailVC.notifyNewHeading(_:)), name: Notification.Name(rawValue: "NewHeading"), object: nil)
+        
+        
+        
+    }
+    
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        
+            super.viewWillDisappear(animated)
+            delegate?.backFromDetailVC(self)
+        
         
     }
     
 
     @IBAction func deleteButton(_ sender: UIButton) {
         
+        let alert = UIAlertController(title: "Eintrag löschen", message: "Soll der aktuelle Eintrag wirklich gelöscht werden?", preferredStyle: .alert)
         
+        // Falls JA
+        alert.addAction(UIAlertAction(title: "Ja", style: .destructive, handler: {
+            (_) in
+            self.deleteItem = true
+            self.navigationController?.popViewController(animated: true)
+        }))
+        
+        
+        // bei NEIN
+        alert.addAction(UIAlertAction(title: "Nein", style: .cancel, handler: nil))
+        
+        // Dialog anzeigen
+        present(alert, animated: true, completion: nil)
     }
     
     
@@ -79,7 +107,17 @@ class DetailVC: UIViewController {
         let fromLat = mylocmgr.location.coordinate.latitude / 180 * .pi
         let fromLong = mylocmgr.location.coordinate.longitude / 180 * .pi
         
-        //let rad = atan2
+        let rad = atan2(sin(toLong - fromLong) * cos(toLat), cos(fromLat) * sin(toLat) * cos(toLong - fromLong))
+        
+        heading = rad * 180 / .pi
+    }
+    
+    // Benachrichtigung über neue Kompassrichtung
+    // Hier beginnt die Auswertung von Heading. 
+    @objc func notifyNewHeading(_ notification:Notification) {
+        
+        // Richtung von der aktuellen Richtung zum Ziel ausrechnen
+        arrowview.heading = mylocmgr.heading.trueHeading - heading + 90
     }
     
     

@@ -20,9 +20,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //tableView.delegate = self
         tableView.dataSource = self
-    //    tableView.delegate = self
-        
+           
         NotificationCenter.default.addObserver(self, selector: #selector(ViewController.notifyNewLocation(_:)), name: Notification.Name("NewLocation"), object: nil)
         
     }
@@ -36,7 +36,6 @@ class ViewController: UIViewController {
         let lat = degressMinutes(coord.latitude)
         
         lblPosition.text = "Position Lat = \(lat) / Long = \(long)"
-        
         
     }
     
@@ -56,22 +55,22 @@ class ViewController: UIViewController {
             
             dest.row = indexPath.row
             dest.pos = poslist[indexPath.row]
-            //    dest.delegate = self
+            dest.delegate = self
             
         }
-        
     }
     
     
     
     // Sobald das SaveVC verlassen wird
-    override func unwind(for unwindSegue: UIStoryboardSegue, towards subsequentVC: UIViewController) {
+    //@IBAction override func unwind(for unwindSegue: UIStoryboardSegue, towards subsequentVC: UIViewController)
+    
+    @IBAction func unwindToMainView(_ segue: UIStoryboardSegue) {
         
-        if let src = unwindSegue.source as? SaveVC {
+        if let src = segue.source as? SaveVC {
             
-            
-            if !unwindSegue.source.isBeingDismissed {
-                unwindSegue.source.dismiss(animated: true, completion: nil)
+            if !segue.source.isBeingDismissed {
+                segue.source.dismiss(animated: true, completion: nil)
             }
             
             if let txt = src.posname.text {
@@ -80,7 +79,6 @@ class ViewController: UIViewController {
                 let posname = txt.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
                 
                 if posname != "", let loc = mylocmgr.location {
-                    
                     
                     // Initialisieren des neuen Objekts nachdem man aus der SaveVC zurückgekehrt ist
                     let newpos = Position(posname, loc.timestamp, loc.coordinate.latitude, loc.coordinate.longitude)
@@ -172,15 +170,7 @@ extension ViewController: DetailVCDelegate {
                 tableView.reloadData()
                 
             }
-            
-            
         }
-        
-        
-        
     }
-    
-    
-    
     
 }
