@@ -34,17 +34,17 @@ class MyLocationManager:  NSObject, CLLocationManagerDelegate {
         heading = locmgr.heading
         
         NotificationCenter.default.post(name: .init("HewHeading"), object: manager)
-        
     }
+    
+    
+    
     
     // bei Bedarf: Kalibrierung der Kompassnadel
     func locationManagerShouldDisplayHeadingCalibration(_ manager: CLLocationManager) -> Bool {
         return true
     }
     
-    
-    
-    
+  
     override init() {
         
         super.init()

@@ -32,8 +32,10 @@ class ViewController: UIViewController {
     @objc func notifyNewLocation(_ notification: Notification) {
         
         let coord = mylocmgr.location.coordinate
-        let long = degressMinutes(coord.longitude)
-        let lat = degressMinutes(coord.latitude)
+        var long = degressMinutes(coord.longitude)
+        var lat = degressMinutes(coord.latitude)
+        
+        //
         
         lblPosition.text = "Position Lat = \(lat) / Long = \(long)"
         
@@ -80,6 +82,8 @@ class ViewController: UIViewController {
                 
                 if posname != "", let loc = mylocmgr.location {
                     
+                   // let loc = mylocmgr.location
+                    
                     // Initialisieren des neuen Objekts nachdem man aus der SaveVC zurückgekehrt ist
                     let newpos = Position(posname, loc.timestamp, loc.coordinate.latitude, loc.coordinate.longitude)
                     
@@ -114,11 +118,13 @@ extension ViewController: UITableViewDataSource {
         dfmt.dateStyle = .medium
         dfmt.timeStyle = .short
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ProtoCell", for: indexPath)
-        cell.textLabel?.text = poslist[indexPath.row].name
-        cell.detailTextLabel?.text = dfmt.string(from: poslist[indexPath.row].time as Date)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ProtoCell", for: indexPath) as? TVC_Orte
         
-        return cell
+        
+        cell?.txtLabel.text = poslist[indexPath.row].name
+        cell?.txtDetail.text = dfmt.string(from: poslist[indexPath.row].time as Date)
+        
+        return cell!
         
     }
 }
